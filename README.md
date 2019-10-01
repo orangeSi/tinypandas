@@ -9,7 +9,7 @@ TODO: Write a description here
    ```yaml
    dependencies:
      tinypandas:
-       github: your-github-user/tinypandas
+       github: orangeSi/tinypandas
    ```
 
 2. Run `shards install`
@@ -36,4 +36,4 @@ TODO: Write development instructions here
 
 ## Contributors
 
-- [your-name-here](https://github.com/your-github-user) - creator and maintainer
+- [orangeSi](https://github.com/your-github-user) - creator and maintainer
