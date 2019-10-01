@@ -49,12 +49,22 @@ puts df.t["B3"]["A1"]
 
 ```
 then go to example ```cd example; crystal build test.cr ```
+```
+$cat demo.xls
+# note
+	A1	A3	A2
+B1	1	3	2
+B2	7	2	8
+B3	4	9	5
+```
 then ```./test demo.xls``` or ```./test demo.xls.gz```
 will get this:
 ```
 intpu file demo.xls
 buffer is {"A1" => [1, 7, 4], "A3" => [3, 2, 9], "A2" => [2, 8, 5]}, df_index is ["B1", "B2", "B3"]
+
 df is DataFrame(@dict={"A1" => Series(@dict={"B1" => 1, "B2" => 7, "B3" => 4}), "A3" => Series(@dict={"B1" => 3, "B2" => 2, "B3" => 9}), "A2" => Series(@dict={"B1" => 2, "B2" => 8, "B3" => 5})}, @index=["B1", "B2", "B3"], @columns=["A1", "A3", "A2"])
+
 df.to_str is
 	A1	A3	A2
 B1	1	3	2

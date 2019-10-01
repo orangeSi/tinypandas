@@ -61,7 +61,7 @@ class Tinypandas
 		raise "error: don't get index of table\n" 
 	end
 
-	puts "buffer is #{buffer}, df_index is #{df_index}"
+	#puts "buffer is #{buffer}, df_index is #{df_index}"
 	return DataFrame.new(buffer, index: df_index)
   end
   
