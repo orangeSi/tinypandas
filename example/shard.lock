@@ -1,0 +1,6 @@
+version: 1.0
+shards:
+  tinypandas:
+    github: orangeSi/tinypandas
+    commit: 99692cea7fc44f28df986fd513711e24f65f548c
+
