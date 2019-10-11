@@ -19,6 +19,7 @@ class Tinypandas
   def initialize()
   end
   def read_table(filepath_or_buffer : String, sep = "\t", t : Int32|Bool = 0, delimiter : String = "\n", header : HeaderType = 0, index_col : IndexColType = 0, comment : String|Regex = "#", skiprows : SkiprowsType = false, skip_blank_lines : Bool = true)
+	  t0 = Time.utc
 	  if filepath_or_buffer.is_a?(String)
 		#todo: check filepath_or_buffer file if exists
 		raise "error: only support header = Int yet\n" unless header.is_a?(Int32)
@@ -58,25 +59,27 @@ class Tinypandas
 	
 	unless df_index.is_a?(Array)
 		df_index = [] of String
-		raise "error: don't get index of table\n" 
+		#raise "error: don't get index of table\n" 
 	end
 
 	#puts "buffer is #{buffer}, df_index is #{df_index}"
+	puts Time.utc - t0 
 	return DataFrame.new(buffer, index: df_index)
   end
   
   def read_line(line : String, buffer : DFhash, df_index : Array(String))
 	#@row_num += 1
-	arr = line.split(/#{@sep}/)
-	if (index_col_instance = @index_col).is_a?(Number) && @got_header && (header_instance = @header).is_a?(Array)
-		arr.each_with_index do |value, index|
-			next if index < index_col_instance
-			if index == index_col_instance
-				df_index << value.to_s 
+	if @got_header && (index_col_instance = @index_col).is_a?(Number) && (header_instance = @header).is_a?(Array)
+		line.split(/#{@sep}/).each_with_index do |value, index|
+			if index <= index_col_instance
+				if index == index_col_instance
+					df_index << value
+				end
 				next
 			end
 			buffer[header_instance[index-1]] = Array(VTYPE).new unless buffer.has_key?(header_instance[index-1])
 			buffer[header_instance[index-1]] << self.guess_type(value)
+			#buffer[header_instance[index-1]] << value
 		end
 	else
 		raise "error: only support index_col is Int32 yet, is #{index_col}\n"

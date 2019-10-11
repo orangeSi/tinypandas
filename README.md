@@ -48,7 +48,7 @@ puts "df.t[B3][A1] is "
 puts df.t["B3"]["A1"]
 
 ```
-then go to example ```cd example; crystal build test.cr ```
+then go to example ```cd example; crystal build test.cr --release```
 ```
 $cat demo.xls
 # note

@@ -19,7 +19,7 @@ struct DataFrame
 			if index.size == 0
 				(0...nrow_number).to_a.each {|e| index << e.to_s}
 			elsif index.size != nrow_number
-				raise "error: data have #{nrow_number} lines, but you give index size is #{index.size}, index is #{index}\n" 
+				raise "error: data have #{nrow_number} lines, but you give index size is #{index.size}\n" 
 			end
 
 			# check and get columns
@@ -36,7 +36,7 @@ struct DataFrame
 				data[key].each_with_index do |e, j| 
 					dict[column].add index[j], e
 				end
-				data.delete(key)
+				#data.delete(key)
 			end
 
 		elsif data.is_a?(Array)
@@ -56,6 +56,7 @@ struct DataFrame
 		end
 		return DataFrame.new(data_head)
 	end
+
 	def [](column_name : String)
 		if dict.has_key?(column_name)
 			return dict[column_name]
@@ -86,36 +87,80 @@ struct DataFrame
 		return self.t
 	end
 	def t
+		t0 = Time.utc
 		new_index = [] of KType
 		new_columns = [] of KType
 		index.each {|e| new_columns << e}
 		columns.each {|e| new_index << e}
 
 		data_t = Hash(KType, Array(ColumnType)).new
+		a0 = Time.utc
+		key_size = dict.keys.size
+		keys = dict.keys
 		index.each_with_index do |value, i|
-			value = value.to_s
-			dict.keys.each do |key|
-				data_t[value] = Array(ColumnType).new unless data_t.has_key?(value)
-				data_t[value] << dict[key][i]
+			#if i % 10 == 0
+			#	puts "i=#{i} cost time:"
+			#	puts Time.utc - a0
+			#	a0 = Time.utc
+			#end
+			#value = value.to_s
+			keys.each do |key|
+				data_t[value] = Array(ColumnType).new(key_size) unless data_t.has_key?(value)
+				data_t[value] << dict[key][value]
 			end
 		end
 		#puts "t index is #{new_index}, new_columns is #{new_columns}"
+		puts "DataFrame.t cost time:"
+		puts Time.utc - t0
 		return DataFrame.new(data_t, new_index, new_columns)
 		# Transpose index and columns
 	end
-	def to_str(sep : String = "\t")
-		str = sep
-		columns.each {|e| str +="#{e}#{sep}"}
-		str = str.gsub(/#{sep}$/, "\n")
+	def to_str(outfile : String|Nil = nil, sep = "\t", header : Bool|Array(String) = true, index_col : Bool = true, mode : String = "w") # chunksize : Int or None, Rows to write at a time
+		str = ""
+		if header.is_a?(Bool) 
+			if header == true
+				str = sep
+				columns.each {|e| str +="#{e}#{sep}"}
+				str = str.gsub(/#{sep}$/, "\n")
+			end
+		else
+			raise "error: not support header = Array in to_str yet\n"
+		end
 
+		if outfile.is_a?(String)
+			out = File.open(outfile, mode)
+			if header.is_a?(Bool) && header == true
+				out.puts(str.gsub(/\n$/, ""))
+				str = ""
+			end
+		end
+
+		
 		(0...index.size).to_a.each do |i|
 			str += "#{index[i]}#{sep}"
-			dict.keys.each do |key|	
+			dict.keys.each do |key|
 				str = "#{str}#{dict[key][i]}#{sep}"
 			end
 			str = str.gsub(/#{sep}$/, "\n")
+			if !out.nil?
+				out.puts(str.gsub(/\n$/, ""))
+				str = ""
+			end
+
 		end
-		return str
+		if !out.nil?
+			out.close
+			return 0
+		else
+			return str
+		end
+	end
+
+	def to_s(sep : String = "\t")
+		return self.to_str(sep)
+	end
+
+	def to_table(outfile : String|Nil = nil, sep = "\t", header : Bool|Array(String) = true, index_col : Bool = true, mode : String = "w")	self.to_str(outfile, sep, header, index_col, mode)
 	end
 end
 
@@ -125,7 +170,6 @@ def dataframe_test
 	puts typeof(t)
 	puts "t is #{t}"
 	y = DataFrame.new(t)
-
 	puts "y.index #{y.index}"
 	puts "y.columns #{y.columns}"
 	puts "y[C4][0] is "
@@ -143,5 +187,7 @@ def dataframe_test
 	puts y.loc.columns
 	puts y.loc["0"]["C4"]
 	puts y.loc[1][1]
+	y.to_table("y.out.xls")
 end
 
+#dataframe_test

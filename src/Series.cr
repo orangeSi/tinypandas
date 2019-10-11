@@ -38,7 +38,7 @@ struct Series
 	end
 
 	def [](i : Int32|Int64)
-		return self.to_a[i]
+		return dict.values[i]
 	end
 	
 
@@ -175,7 +175,7 @@ struct Series
 		dict[key] = value
 	end
 	def add(key : KTYPE, value :  VTYPE, overwrite = true)
-		raise "error: key #{key} has exists, use add(key, value, overwrite: true) to ignore this\n" if overwrite == false && dict.has_key?(key) 
+		#raise "error: key #{key} has exists, use add(key, value, overwrite: true) to ignore this\n" if overwrite == false && dict.has_key?(key) 
 		dict[key] = value
 	end
 	def to_str(sep : String = "\t")
@@ -186,6 +186,10 @@ struct Series
 			str = str.gsub(/#{sep}$/, "\n")
 		end
 		return str
+	end
+
+	def to_s(sep : String = "\t")
+		return self.to_str(sep)
 	end
 
 end
