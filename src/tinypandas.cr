@@ -1,4 +1,5 @@
 require "gzip"
+require "csv"
 require "./DataFrame"
 
 class Tinypandas
@@ -122,10 +123,46 @@ class Tinypandas
 	  return value.to_i if value.to_i? #int
 	  return value.to_f if value.to_f? #float
 	  return value
-  end
+	end
+	
+	def each_csv_row(filename, headers)
+		File.open(filename) do |infile|
+			headers_returned = false
+			csv_rows = CSV.new(infile, headers: headers)
+			csv_rows.each do |parser|
+				yield parser
+			end
+		end
+	end
+	
+	def load_csv(filename, index_col = -1, index_type="datetime", index_format="%Y-%m-%d %H:%M:%S", headers = true )
+		t0 = Time.utc
+    pp "Loading CSV File"
+    pp "Filename: " + filename
+    pp "Index column: " + index_col.to_s
+    pp "Index type: " + index_type.to_s
+		pp "Index format: " + index_format.to_s
+		
+		buffer = DFhash.new # for DataFrame
+		df_index = Array(String).new
+    
+    each_csv_row(filename, headers: headers) do |parser|
+			if headers && (index_col_instance = index_col).is_a?(Number) && (header_instance = parser.headers).is_a?(Array)
+					parser.row.to_a.each_with_index do |value, index|
+						if index == index_col_instance
+							df_index << value
+						end
+						buffer[header_instance[index-1]] = Array(VTYPE).new unless buffer.has_key?(header_instance[index-1])
+						buffer[header_instance[index-1]] << self.guess_type(value)
+					end
+				end
+			end
 
-
+		puts "Time spent: " + (Time.utc - t0).to_s 
+		return DataFrame.new(buffer, index: df_index )
+	end
 end
+
 
 
 
