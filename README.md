@@ -21,7 +21,7 @@ test code is in ```example/test.cr``` like this:
 require "tinypandas"
 
 pd = Tinypandas.new
-df = pd.read_table(ifile)
+df = pd.read_table(ifile, sep = "\t") # def read_table(filepath_or_buffer : String, sep = "\t", t : Int32|Bool = 0, delimiter : String = "\n", header : HeaderType = 0, index_col : IndexColType = 0, comment : String|Regex = "#", skiprows : SkiprowsType = false, skip_blank_lines : Bool = true)
 
 puts "df is #{df}\n"
 
