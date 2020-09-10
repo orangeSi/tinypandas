@@ -1,0 +1,15 @@
+##fileformat=VCFv4.2
+##fileDate=20151002
+##source=callMomV0.2
+##reference=gi|251831106|ref|NC_012920.1| Homo sapiens mitochondrion, complete genome
+##contig=<ID=MT,length=16569,assembly=b37>
+##INFO=<ID=VT,Number=.,Type=String,Description="Alternate allele type. S=SNP, M=MNP, I=Indel">
+##INFO=<ID=AC,Number=.,Type=Integer,Description="Alternate allele counts, comma delimited when multiple">
+##FILTER=<ID=fa,Description="Genotypes called from fasta file">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	HG00096	HG00097	HG00099
+MT	10	.	T	C	100	fa	VT=S;AC=3	GT	0	0	0
+MT	16	.	A	T	100	fa	VT=S;AC=3	GT	0	0	0
+MT	26	.	C	T	100	fa	VT=S;AC=3	GT	0	0	0
+MT	35	.	G	A	100	fa	VT=S;AC=2	GT	0	0	0
+MT	40	.	TC	CT	100	fa	VT=M;AC=1	GT	0	0	0

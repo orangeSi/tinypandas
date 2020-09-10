@@ -24,6 +24,17 @@ puts "df.t.to_str is\n#{df.t.to_str}"
 puts "df.t[B3][A1] is "
 puts df.t["B3"]["A1"]
 
+df2 = pd.read_table(ifile, sep: "\t", index_col: 1)
+puts "df2 is #{df2}\n"
+puts "df2.to_str is\n#{df2.to_str}\n\n"
+
+df = pd.read_table("demo.vcf", sep: "\t", index_col: nil, comment: "##")
+puts "df.to_str is\n#{df.to_str}\n\n"
+puts "df.head(1).to_s is\n" 
+puts df.head(1).to_s
+puts "\n"
+##
+
 
 puts "Testing CSV import"
 #filename = "./example/sample.csv"
@@ -34,3 +45,7 @@ df = pd.load_csv(filename)
 puts "df is #{df}\n"
 puts "df.to_str is\n#{df.to_str}\n"
 puts "df[col2][2] is #{df["col2"]["2"]}\n"
+
+#puts "df2.to_str is\n#{df2.to_str}\n\n"
+#puts "df.to_str is\n#{df.to_str}\n"
+

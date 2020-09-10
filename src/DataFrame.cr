@@ -7,6 +7,7 @@ struct DataFrame
 	property dict = Hash(KType, Series).new
 	property index, columns # index/columns only support String
 	def initialize(data, @index  = [] of KType, @columns  = [] of KType)
+		t0 = Time.utc
 		if data.is_a?(Hash) # copy data to dict
 			## check data.key and data.value
 			data.values.each do |e|
@@ -44,7 +45,7 @@ struct DataFrame
 		else
 			raise "error: only support Hash or Array yet\n"
 		end
-
+	  	puts "init DataFrame cost time: " + (Time.utc - t0).to_s
 	end
 	def head(nrow = 3)
 		data_head = Hash(KType, Array(ColumnType)).new
@@ -157,10 +158,11 @@ struct DataFrame
 	end
 
 	def to_s(sep : String = "\t")
-		return self.to_str(sep)
+		return self.to_str(sep: sep)
 	end
 
-	def to_table(outfile : String|Nil = nil, sep = "\t", header : Bool|Array(String) = true, index_col : Bool = true, mode : String = "w")	self.to_str(outfile, sep, header, index_col, mode)
+	def to_table(outfile : String|Nil = nil, sep = "\t", header : Bool|Array(String) = true, index_col : Bool = true, mode : String = "w")
+		self.to_str(outfile, sep, header, index_col, mode)
 	end
 end
 
