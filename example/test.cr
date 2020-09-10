@@ -33,6 +33,12 @@ puts "df.to_str is\n#{df.to_str}\n\n"
 puts "df.head(1).to_s is\n" 
 puts df.head(1).to_s
 puts "\n"
+
+df = pd.load_vcf("demo.vcf")
+puts "load_vcf\n"
+puts "df.head(1).to_s is\n" 
+puts df.head(1).to_s
+puts "\n"
 ##
 
 

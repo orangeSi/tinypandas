@@ -55,8 +55,7 @@ puts df.t["B3"]["A1"]
 
 
 ## support vcf format file
-df = pd.read_table("demo.vcf", sep: "\t", index_col: nil, comment: "##")
-puts "df.to_str is\n#{df.to_str}\n\n"
+df = pd.load_vcf("demo.vcf")
 puts "df.head(1).to_s is\n"
 puts df.head(1).to_s
 puts "\n"
@@ -119,6 +118,7 @@ df.t[B3][A1] is
 4
 
 ## support vcf format file
+df.head(1).to_s is
 	#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	HG00096	HG00097	HG00099
 0	MT	10	.	T	C	100	fa	VT=S;AC=3	GT	0	0	0
 

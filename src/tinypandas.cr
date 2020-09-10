@@ -177,6 +177,9 @@ class Tinypandas
 		end
 	end
 	
+  	def load_vcf(filepath_or_buffer : String, sep = "\t", delimiter : String = "\n", header : HeaderType = 0, index_col : IndexColType = nil, comment : String|Regex = "##", skiprows : SkiprowsType = false, skip_blank_lines : Bool = true)
+		self.read_table(filepath_or_buffer: filepath_or_buffer, sep: sep, delimiter: delimiter, header: header, index_col: index_col, comment: comment, skiprows: skiprows, skip_blank_lines: skip_blank_lines)
+	end
 	def load_csv(filename, index_col : IndexColType = nil, index_type="datetime", index_format="%Y-%m-%d %H:%M:%S", headers = true )
 		t0 = Time.utc
 		pp "Loading CSV File"
