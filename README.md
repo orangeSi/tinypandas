@@ -62,7 +62,6 @@ puts "\n"
 
 ## support csv format file
 
-puts "df.head(1).t.to_s is\n"
 df = pd.load_csv("sample.csv")
 puts "df is #{df}\n"
 puts "df.to_str is\n#{df.to_str}\n"
@@ -134,6 +133,8 @@ df.to_str is
 5	2020-02-01 12:00:27	66858	0.66	FALSE	str6
 6	2020-02-01 12:00:32	66905	0.64	TRUE	str7
 7	2020-02-01 12:00:37	66885	0.66	FALSE	str8
+
+df[col2][2] is 0.65
 ```
 
 TODO: Write usage instructions here
