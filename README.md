@@ -61,7 +61,6 @@ puts df.head(1).to_s
 puts "\n"
 
 ## support csv format file
-
 df = pd.load_csv("sample.csv")
 puts "df is #{df}\n"
 puts "df.to_str is\n#{df.to_str}\n"
