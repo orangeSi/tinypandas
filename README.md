@@ -63,7 +63,7 @@ puts "\n"
 ## support csv format file
 
 puts "df.head(1).t.to_s is\n"
-ad_csv(filename)
+df = pd.load_csv("sample.csv")
 puts "df is #{df}\n"
 puts "df.to_str is\n#{df.to_str}\n"
 puts "df[col2][2] is #{df["col2"]["2"]}\n"
