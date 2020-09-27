@@ -55,3 +55,15 @@ puts "df[col2][2] is #{df["col2"]["2"]}\n"
 #puts "df2.to_str is\n#{df2.to_str}\n\n"
 #puts "df.to_str is\n#{df.to_str}\n"
 
+
+
+## read Array(Array()) as DataFrame
+data = [[1,2,3],[4,5,6],[6,7,8]]
+df = DataFrame.new(data, columns: ["c1","c2","c3"]) # read_array_by_row: true
+puts "\nArray(Array()):#{data} to DataFrame:\n#{df.to_s}"
+
+
+## read Hash(String, Array()) as DataFrame
+data = {"c1"=>[1,2,3], "c2"=>[4,5,6], "c3"=>[6,7,8]}
+df = DataFrame.new(data)
+puts "\nHash(String, Array()):#{data} to DataFrame:\n#{df.to_s}"

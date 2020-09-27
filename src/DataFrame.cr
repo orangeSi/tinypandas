@@ -6,21 +6,22 @@ struct DataFrame
 	alias KType = String
 	property dict = Hash(KType, Series).new
 	property index, columns # index/columns only support String
-	def initialize(data, @index  = [] of KType, @columns  = [] of KType)
+	def initialize(data, @index  = [] of KType, @columns  = [] of KType, read_array_by_row : Bool = true)
 		t0 = Time.utc
 		if data.is_a?(Hash) # copy data to dict
 			## check data.key and data.value
 			data.values.each do |e|
-				raise "error: DataFrame only support Hash(String, Array(Int32|Int64|String|Float32|Float64)) yet, instead of #{typeof(e)}\n" unless e.is_a?(Array)
+				raise "error: DataFrame support Hash(String, Array(Int32|Int64|String|Float32|Float64)) yet, instead of Hash(String, #{typeof(e)})\n" unless e.is_a?(Array)
 			end
 
 			# check and get index
-			nrow_number = data.first_value.size
-			#puts "data.first_value is #{data.first_value}"
-			if index.size == 0
-				(0...nrow_number).to_a.each {|e| index << e.to_s}
-			elsif index.size != nrow_number
-				raise "error: data have #{nrow_number} lines, but you give index size is #{index.size}\n" 
+			if data.keys.size != 0
+				nrow_number = data.first_value.size
+				if index.size == 0
+					(0...nrow_number).each {|e| index << e.to_s}
+				elsif index.size != nrow_number
+					raise "error: data have #{nrow_number} lines, but you give index size is #{index.size}\n" 
+				end
 			end
 
 			# check and get columns
@@ -40,8 +41,62 @@ struct DataFrame
 				#data.delete(key)
 			end
 
-		elsif data.is_a?(Array)
-			raise "warn: Array support is to do for DataFrame\n"
+		elsif data.is_a?(Array) #
+			data.each do |e|
+				raise "error: DataFrame support Array(Array(Int32|Int64|String|Float32|Float64)) yet, instead of Array(#{typeof(e)})\n" unless e.is_a?(Array)
+			end
+			if read_array_by_row # element of Array is one row of dataframe
+				# check and get index
+				if index.size == 0
+					(0...data.size).each {|e| index << e.to_s}
+				elsif index.size != data.size
+					raise "error: data have #{data.size} lines, but you give index size is #{index.size}\n"
+				end
+
+				# check and get columns
+				if data.size != 0 && data[0].size != 0
+					if columns.size == 0
+						(0...data[0].size).each {|e| columns << e.to_s}
+					elsif columns.size != data[0].size
+						raise "error: data have #{data[0].size} columns, but columns: size #{columns.size}\n"
+					end
+				end
+
+				# copy data to dict with new index and columns
+				data.each_with_index do |row, i| 
+					row.each_with_index do |e, j|
+						dict[columns[j]] = Series.new unless dict.has_key?(columns[j])
+						dict[columns[j]].add index[i], e
+					end
+				end
+				
+			else # element of Array is one column of dataframe
+				# check and get index
+				if data.size != 0 && data[0].size != 0
+					if index.size == 0
+						(0...data[0].size).each {|e| index << e.to_s}
+					elsif index.size != data[0].size
+						raise "error: data have #{data[0].size} lines, but you give index size is #{index.size}\n"
+					end
+				end
+
+				# check and get columns
+				if columns.size == 0
+					(0...data.size).each {|e| columns << e.to_s}
+				elsif columns.size != data.size
+					raise "error: data have #{data.size} columns, but columns: size #{columns.size}\n"
+				end
+
+				# copy data to dict with new index and columns
+				data.each_with_index do |col, i| 
+					the_column = columns[i]
+					dict[the_column] = Series.new unless dict.has_key?(the_column)
+					col.each_with_index do |e, j|
+						dict[the_column].add index[j], e
+					end
+			  end	
+			end
+			#raise "warn: Array support is to do for DataFrame\n"
 		else
 			raise "error: only support Hash or Array yet\n"
 		end
@@ -55,8 +110,9 @@ struct DataFrame
 				data_head[e] << ee
 			end
 		end
-		return DataFrame.new(data_head)
+		return DataFrame.new(data_head, index: index[...nrow], columns: columns)
 	end
+
 
 	def [](column_name : String)
 		if dict.has_key?(column_name)
@@ -70,7 +126,7 @@ struct DataFrame
 		return dict[dict.keys[col_number]]
 	end
 	def [](range : Range)
-		puts "not support range yet"
+		puts "error: not support range:#{range} yet"
 	end
 	def [](series : Series)
 		new_index = series.index
@@ -82,7 +138,7 @@ struct DataFrame
 				data_series[c] << dict[c][i]
 			end
 		end
-		return DataFrame.new(data_series, new_index, new_columns)
+		return DataFrame.new(data_series, index: new_index, columns: new_columns)
 	end
 	def loc
 		return self.t
@@ -113,7 +169,7 @@ struct DataFrame
 		#puts "t index is #{new_index}, new_columns is #{new_columns}"
 		puts "DataFrame.t cost time:"
 		puts Time.utc - t0
-		return DataFrame.new(data_t, new_index, new_columns)
+		return DataFrame.new(data_t, index: new_index, columns: new_columns)
 		# Transpose index and columns
 	end
 	def to_str(outfile : String|Nil = nil, sep = "\t", header : Bool|Array(String) = true, index_col : Bool = true, mode : String = "w") # chunksize : Int or None, Rows to write at a time

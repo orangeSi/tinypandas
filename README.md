@@ -67,6 +67,16 @@ puts "df.to_str is\n#{df.to_str}\n"
 puts "df[col2][2] is #{df["col2"]["2"]}\n"
 
 
+## convert Array(Array) to DataFrame
+data = [[1,2,3],[4,5,6],[6,7,8]]
+df = DataFrame.new(data, columns: ["c1","c2","c3"]) # read_array_by_row: true
+puts "\nArray(Array()):#{data} to DataFrame:\n#{df.to_s}"
+
+## read Hash(String, Array()) as DataFrame
+data = {"c1"=>[1,2,3], "c2"=>[4,5,6], "c3"=>[6,7,8]}
+df = DataFrame.new(data)
+puts "\nHash(String, Array()):#{data} to DataFrame:\n#{df.to_s}"
+
 ```
 then go to example ```cd example; crystal build test.cr --release```
 ```
@@ -134,6 +144,19 @@ df.to_str is
 7	2020-02-01 12:00:37	66885	0.66	FALSE	str8
 
 df[col2][2] is 0.65
+
+Array(Array()):[[1, 2, 3], [4, 5, 6], [6, 7, 8]] to DataFrame:
+	c1	c2	c3
+0	1	2	3
+1	4	5	6
+2	6	7	8
+
+Hash(String, Array()):{"c1" => [1, 2, 3], "c2" => [4, 5, 6], "c3" => [6, 7, 8]} to DataFrame:
+	c1	c2	c3
+0	1	4	6
+1	2	5	7
+2	3	6	8
+
 ```
 
 TODO: Write usage instructions here
